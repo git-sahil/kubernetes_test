@@ -1,0 +1,9 @@
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: flask-configmap
+# data:
+#   # SQLALCHEMY_DATABASE_URI: postgresql://f'postgresql://{os.environ["POSTGRES_USER"]}:{os.environ["POSTGRES_PASSWORD"]}@postgres:5432/dbname
+#   # SQLALCHEMY_DATABASE_URI: postgresql://`echo ${mydbusr}`:`echo ${mydbpasswd}`@`echo ${dburl}`:`echo ${dbport}`/`echo ${dbname}`
+#   SSL_CERT: /run/secrets/cert
+#   SSL_KEY: /run/secrets/key

@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-app
+  
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-web-app
+  template:
+    metadata:
+      labels:
+        app: my-web-app
+    spec:
+      containers:
+      - name: my-web-app
+        image: my-web-app:latest
+        ports:
+        - containerPort: 5000
+        # command: ["python", "app.py"]
+        # envFrom:
+        # - configMapRef:
+        #     name: flask-configmap
+        env:
+        - name: SQLALCHEMY_DATABASE_URI
+          valueFrom:
+            secretKeyRef:
+              name: database-secret
+              key: uri
+        - name: SSL_CERT
+          value: /etc/secrets/tls.crt
+        - name: SSL_KEY
+          value: /etc/secrets/tls.key
+        # - name: POSTGRES_USER
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: postgres-secret
+        #       key: POSTGRES_USER
+        # - name: POSTGRES_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: postgres-secret
+        #       key: POSTGRES_PASSWORD
+        volumeMounts:
+        - name: tls-certificates
+          mountPath: /etc/secrets
+          readOnly: true
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      # maxSurge: 1
+      maxUnavailable: 1
+  volumes:
+  - name: tls-certificates
+    secret:
+      secretName: tls-secret
