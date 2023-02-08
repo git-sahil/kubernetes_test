@@ -38,4 +38,4 @@ echo "`base64 tls.key`" | tr -d '\n' > tls.key.base64
 # Now update these values in secrets.yml
 sed -e "s/DBUSERENV/${mydbuser}/" -e "s/DBPASSWORDENV/${mydbpasswd}/" -i ./base/secrets.yml
 
-kubectl apply -k overlay/dev
+kubectl apply -k kustomize/overlay/dev
